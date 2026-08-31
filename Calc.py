@@ -1,6 +1,6 @@
 import tkinter as tk
 
-# ---------- Colors & Fonts ----------
+# Colors & Fonts 
 BG_COLOR = "#1e1e2f"
 CARD_COLOR = "#2a2a40"
 ACCENT = "#7c5cff"
@@ -18,18 +18,18 @@ FONT_BUTTON = ("Segoe UI", 16, "bold")
 root = tk.Tk()
 root.title("Simple Calculator")
 root.geometry("480x560")
-root.resizable(False, False)
+root.resizable(True, True)
 root.configure(bg=BG_COLOR)
 
-# ---------- Header ----------
+# Header
 header_label = tk.Label(root, text="Simple Calculator", font=FONT_HEADER, bg=BG_COLOR, fg=TEXT_COLOR)
 header_label.pack(pady=(30, 20))
 
-# ---------- Card container ----------
+# Card container
 card = tk.Frame(root, bg=CARD_COLOR, padx=30, pady=30)
 card.pack(padx=30, fill="both", expand=True)
 
-# ---------- Input fields ----------
+# Input fields
 tk.Label(card, text="Value 1", font=FONT_LABEL, bg=CARD_COLOR, fg=SUBTEXT_COLOR).grid(
     row=0, column=0, sticky="w", pady=(0, 5)
 )
@@ -51,7 +51,7 @@ val2_entry.grid(row=3, column=0, columnspan=2, sticky="ew", ipady=8, pady=(0, 20
 card.grid_columnconfigure(0, weight=1)
 card.grid_columnconfigure(1, weight=1)
 
-# ---------- Result display ----------
+# Result display
 result_label = tk.Label(
     card, text="Result will appear here", font=FONT_RESULT, bg="#3a3a55", fg=TEXT_COLOR,
     wraplength=360, pady=15
@@ -104,7 +104,7 @@ def divide():
         show_result("Error, cannot divide by zero!", ERROR_COLOR)
 
 
-# ---------- Styled operation buttons ----------
+# Styled operation buttons
 def make_button(parent, text, command):
     btn = tk.Button(
         parent, text=text, font=FONT_BUTTON, command=command,
