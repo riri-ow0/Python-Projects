@@ -1,3 +1,5 @@
+#This file code can be used for simple online dnd campaigns
+
 import random
 import tkinter as tk
 
