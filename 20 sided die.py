@@ -4,7 +4,7 @@ import tkinter as tk
 root = tk.Tk()
 root.title("20-sided Die")
 root.geometry("320x220")
-root.resizable(False, False)
+root.resizable(True, True)
 
 header_label = tk.Label(root, text="20-sided Die", font=("Comic Sans MS", 18, "bold"))
 header_label.pack(pady=(15, 5))
@@ -22,12 +22,15 @@ button_frame.pack(pady=15)
 def roll_die():
     roll = random.randint(1, 20)
 
-    if roll >= 15:
+    if roll < 15:
         result_label.config(text=f"You rolled: {roll}!", fg="black")
-        status_label.config(text="Your attack is effective!", fg="green")
-    else:
+        status_label.config(text="Your attack is INEFFECTIVE.", fg="red")
+    elif roll >= 15 and roll <= 19 :
         result_label.config(text=f"You rolled: {roll}!", fg="black")
-        status_label.config(text="Your attack is ineffective.", fg="red")
+        status_label.config(text="Your attack is EFFECTIVE!", fg="green")
+    elif roll == 20:
+        result_label.config(text=f"You rolled: {roll}!", fg="black")
+        status_label.config(text="Your attack is SUPER EFFECTIVE!", fg="blue")
 
 
 def quit_app():
