@@ -1,6 +1,7 @@
 total = 0
+retry = True
 
-while True:
+while retry:
     try:
         choice = int(input("\n=====Interactive Menu=====\n[1] Burger (₱120)\n[2] Pizza (₱250)\n[3] Pasta (₱180)\n[4] Fried Chicken (₱150)\n[5] Softdrinks (₱50)\nPlease Enter your Choice: "))
         if choice < 1 or choice > 5:
@@ -61,7 +62,7 @@ while True:
         except ValueError:
             print('Please enter a valid number!')
             continue
-    elif choice == 5: 
+    elif choice == 5:
         try:
             c5 = int(input("How many Softdrink/s?: "))
             if c5 < 0:
@@ -74,10 +75,16 @@ while True:
         except ValueError:
             print('Please enter a valid number!')
             continue
-    option = input("Would you like to order again?[y/n]: ")
-    if option == "y" or option == "Y":
-        continue   
-    else: 
-        print("Thank you for ordering!")
-        print("Your total is ₱", total)
-        break
+
+    while True:
+        option = input("Would you like to order again?[y/n]: ")
+        if option.lower() == 'y':
+            break
+        elif option.lower() == 'n':
+            print("Thank you for ordering!")
+            print("Your total is ₱", total)
+            retry = False
+            break
+        else:
+            print('Please enter a valid input and try again!')
+            continue
