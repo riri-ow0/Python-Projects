@@ -1,0 +1,26 @@
+while True:
+    message = input("\nPlease enter your message: ")
+    try:
+        x = int(input("Enter your first number: "))
+        y = int(input("Enter your second number: "))
+    except ValueError:
+        print("Invalid input, please try again")
+        continue
+    print("\nRamos, Riane Roy G.")
+    print(f"Message: {message}")
+    print(f"Concatenation: {x + y}")
+    print(f"The sum of {x} + {y} is {x + y}\nThe difference of {x} - {y} is {x - y}\nThe product of {x} x {y} is {x * y}")
+    try:
+        print(f"The quotient of {x} ÷ {y} is {x / y}")
+    except ZeroDivisionError:
+        print("Can't divide by 0")
+
+    retry = input("Would you like to try again? (y/n): ")
+    if retry.lower() == "y" or retry.lower() == "yes":
+        continue
+    elif retry.lower() == "n" or retry.lower() == "no":
+        print("Goodbye.")
+        break
+    else:
+        print("\nInvalid/incomplete input, terminating program...\n\n[Program terminated.]")
+        break
