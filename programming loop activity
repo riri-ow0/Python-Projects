@@ -6,7 +6,7 @@ while True:
     except ValueError:
         print("Invalid input, please try again")
         continue
-    print("\nRamos, Riane Roy G.")
+    print("\nLast Name, First Name")
     print(f"Message: {message}")
     print(f"Concatenation: {x + y}")
     print(f"Product = {x * y}")
