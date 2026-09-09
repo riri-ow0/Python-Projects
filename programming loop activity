@@ -11,10 +11,13 @@ while True:
     print(f"Concatenation: {x + y}")
     print(f"Product = {x * y}")
     try:
-        print(f"Quotient = {x / y}")
+        result = x / y
+        if result == 0 or result != int(result):
+            print("Error: invalid quotient")
+        else:
+            print(f"Quotient = {result:.0f}")
     except ZeroDivisionError:
         print("Can't divide by 0")
-    print(f"Sum = {x + y}\nDifference = {x - y}")
 
     if x > y:
         print("\nMultiplication Table")
