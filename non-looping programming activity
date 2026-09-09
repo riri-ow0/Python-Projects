@@ -1,28 +1,29 @@
 message = input("\nPlease enter your message: ")
 try:
-    n1 = int(input("Enter a value: "))
-    n2 = int(input("Enter another value: "))
+    x = int(input("Enter a value: "))
+    y = int(input("Enter another value: "))
 except ValueError:
     print("Invalid input, please try again")
 
 print("\nLast Name, First Name")
 print(f"Message: {message}")
-print(f"Concatenation: {n1 + n2}")
-print(f"Product = {n1 * n2}")
+print(f"Concatenation: {x + y}")
+print(f"Product = {x * y}")
 try:
-    result = n1 / n2
+    result = x / y
     if result == 0 or result != int(result):
         print("Error: invalid quotient")
     else:
         print(f"Quotient = {result:.0f}")
 except ZeroDivisionError:
     print("Can't divide by 0")
-
-if n1 > n2:
+print(f"Sum = {x + y}")
+print(f"Difference = {x - y}")
+if x > y:
     print("\nMultiplication Table")
-    for n1 in range(1, n1 + 1):
-        print(f"{n1} x {n2} = {n1 * n2}")
+    for x in range(1, x + 1):
+        print(f"{x} x {y} = {x * y}")
 else:
     print("\nMultiplication Table")
-    for n1 in range(1, n1 + 1):
-        print(f"{n1} x {n2} = {n1 * n2}")
+    for x in range(1, x + 1):
+        print(f"{x} x {y} = {x * y}")
