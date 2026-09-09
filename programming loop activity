@@ -6,7 +6,7 @@ while True:
     except ValueError:
         print("Invalid input, please try again")
         continue
-    print("\nLast Name, First Name")
+    print("\nRamos, Riane Roy G.")
     print(f"Message: {message}")
     print(f"Concatenation: {x + y}")
     print(f"Product = {x * y}")
@@ -18,6 +18,8 @@ while True:
             print(f"Quotient = {result:.0f}")
     except ZeroDivisionError:
         print("Can't divide by 0")
+    print(f"Sum = {x + y}")
+    print(f"Difference = {x - y}")
 
     if x > y:
         print("\nMultiplication Table")
