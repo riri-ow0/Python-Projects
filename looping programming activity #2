@@ -1,0 +1,100 @@
+import time
+
+
+def slow_print(text, delay=0.06):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
+
+def fast_print(text, delay=0.02):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()    
+
+
+def slow_input(prompt, delay=0.02):
+    for char in prompt:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    return input()
+
+
+retry = True
+while retry:
+    try:
+        v1 = int(slow_input("Enter a value: "))
+    except ValueError:
+        slow_print("Please enter a valid number.")
+        continue
+    try:
+        v2 = int(slow_input("Enter another value: "))
+    except ValueError:
+        slow_print("Please enter a valid number.")
+        continue
+    try:
+        choice = int(slow_input(
+            "\nChoose from the following:\n[1] Addition\n[2] Subtraction\n[3] Multiplication\n[4] Division\n[5] All Operations\n[6] Exit\nEnter your choice: "))
+    except ValueError:
+        slow_print("Please enter a valid number.")
+        continue
+
+    if choice < 1 or choice > 6:
+        slow_print("Please enter a number from 1 to 6.")
+        continue
+
+    match choice:
+        case 1:
+            fast_print(f"\nThe sum of {v1} + {v2} = {v1 + v2}")
+        case 2:
+            fast_print(f"\nThe difference of {v1} - {v2} = {v1 - v2}")
+            if v1 - v2 < 0:
+                fast_print("\nThe difference is negative.")
+        case 3:
+            if v1 * v2 == 0:
+                fast_print("The product is 0.")
+            else:
+                fast_print(f"The product of {v1} * {v2} = {v1 * v2}")
+        case 4:
+            larger, smaller = (v1, v2) if v1 >= v2 else (v2, v1)
+            if smaller == 0:
+                fast_print("\nCannot divide by zero.")
+            else:
+                result = larger / smaller
+                if result != int(result):
+                    fast_print("\nError: invalid/zero quotient")
+                else:
+                    fast_print(f"\nThe quotient of {larger} / {smaller} = {result}")
+        case 5:
+            fast_print(f"\nThe sum of {v1} + {v2} = {v1 + v2}")
+            fast_print(f"The difference of {v1} - {v2} = {v1 - v2}")
+            if v1 - v2 < 0:
+                fast_print("The difference is negative.")
+            if v1 * v2 == 0:
+                fast_print("The product is 0.")
+            else:
+                fast_print(f"The product of {v1} * {v2} = {v1 * v2}")
+            larger, smaller = (v1, v2) if v1 >= v2 else (v2, v1)
+            if smaller == 0:
+                fast_print("Cannot divide by zero.")
+            else:
+                result = larger / smaller
+                if result != int(result):
+                    fast_print("Error: invalid/zero quotient")
+                else:
+                    fast_print(f"The quotient of {larger} / {smaller} = {result}")
+        case 6:
+            fast_print("\nGoodbye!")
+            exit()
+
+    retry = slow_input("\nWould you like to try again? [y/n]: ")
+    if retry.lower() == "y" or retry.lower() == "yes":
+        retry = True
+    elif retry.lower() == "n" or retry.lower() == "no":
+        retry = False
+        slow_print("\nTerminating Program...\nGoodbye!")
+        exit()
+    else:
+        fast_print("\nInvalid/Incomplete input.\nTerminating...\nProgram Terminated.")
+        exit()
