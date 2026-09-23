@@ -1,6 +1,5 @@
 import time
 
-
 def slow_print(text, delay=0.06):
     for char in text:
         print(char, end='', flush=True)
@@ -13,13 +12,11 @@ def fast_print(text, delay=0.02):
         time.sleep(delay)
     print()    
 
-
 def slow_input(prompt, delay=0.02):
     for char in prompt:
         print(char, end='', flush=True)
         time.sleep(delay)
     return input()
-
 
 retry = True
 while retry:
