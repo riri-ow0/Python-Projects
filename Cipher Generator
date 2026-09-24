@@ -1,0 +1,168 @@
+import time
+
+MORSE = {
+    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
+    "F": "..-.", "G": "--.", "H": "....", "I": "..", "J": ".---",
+    "K": "-.-", "L": ".-..", "M": "--", "N": "-.", "O": "---",
+    "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-",
+    "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
+    "Z": "--..",
+    "0": "-----", "1": ".----", "2": "..---", "3": "...--", "4": "....-",
+    "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
+    ".": ".-.-.-", ",": "--..--", "?": "..--..", "!": "-.-.--",
+    "'": ".----.", "-": "-....-",
+}
+REVERSE_MORSE = {code: letter for letter, code in MORSE.items()}
+
+def slow_print(text, delay=0.1):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
+
+def fast_print(text, delay=0.02):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
+
+def slow_input(prompt, delay=0.02):
+    for char in prompt:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    return input()
+
+def shift_text(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base + shift) % 26 + base)
+        else:
+            result += char
+    return result
+
+def show_alphabet(shift):
+    plain = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
+    cipher = shift_text(plain, shift)
+    fast_print("\nPlain:  " + " ".join(plain))
+    fast_print("Cipher: " + " ".join(cipher))
+
+def show_letter_steps(text, shift):
+    fast_print("\nLetter by letter:")
+    for char in text:
+        if char.isalpha():
+            fast_print(f"{char} -> {shift_text(char, shift)}")
+
+def get_shift():
+    while True:
+        raw = slow_input("Shift amount (1-25): ")
+        if raw.isdigit() and 1 <= int(raw) <= 25:
+            return int(raw)
+        fast_print("Enter a whole number from 1 to 25.")
+
+def brute_force(text):
+    fast_print("\nAll 25 possible shifts:")
+    for shift in range(1, 26):
+        fast_print(f"Shift {shift:>2}: {shift_text(text, -shift)}")
+
+def to_morse(text):
+    words = []
+    for word in text.upper().split():
+        letters = [MORSE[char] for char in word if char in MORSE]
+        if letters:
+            words.append(" ".join(letters))
+    return " / ".join(words)
+
+def from_morse(code):
+    words = []
+    for word in code.split("/"):
+        letters = [REVERSE_MORSE.get(symbol, "?") for symbol in word.split()]
+        words.append("".join(letters))
+    return " ".join(words)
+
+def ask_retry():
+    while True:
+        answer = slow_input("\nTry again? (y/n): ").strip().lower()
+        if answer in ("y", "yes"):
+            return True
+        if answer in ("n", "no"):
+            return False
+        fast_print("Type y or n.")
+
+def goodbye():
+    slow_print("Terminating Program...")
+    fast_print("Goodbye!")
+
+def encrypt_action():
+    message = slow_input("Message to encrypt: ")
+    shift = get_shift()
+    show_letter_steps(message, shift)
+    fast_print("Encrypted: " + shift_text(message, shift))
+
+def decrypt_action():
+    message = slow_input("Message to decrypt: ")
+    shift = get_shift()
+    show_letter_steps(message, -shift)
+    fast_print("Decrypted: " + shift_text(message, -shift))
+
+def brute_force_action():
+    message = slow_input("Message to crack: ")
+    brute_force(message)
+
+def alphabet_action():
+    show_alphabet(get_shift())
+
+def to_morse_action():
+    message = slow_input("Message to translate: ")
+    result = to_morse(message)
+    if result:
+        fast_print("Morse code: " + result)
+    else:
+        fast_print("No letters or numbers to translate.")
+
+def from_morse_action():
+    fast_print("Use spaces between letters and a slash between words.")
+    code = slow_input("Morse code to translate: ")
+    fast_print("Text: " + from_morse(code))
+
+def main():
+    while True:
+        fast_print("\nCipher Generator")
+        fast_print(
+            "\n[1] Encrypt a message"
+            "\n[2] Decrypt a message"
+            "\n[3] Brute force a message"
+            "\n[4] Show the letter map for a shift"
+            "\n[5] Text to Morse code"
+            "\n[6] Morse code to text"
+            "\n[7] Quit"
+        )
+        choice = slow_input("\nPick an option: ").strip()
+
+        match choice:
+            case "1":
+                encrypt_action()
+            case "2":
+                decrypt_action()
+            case "3":
+                brute_force_action()
+            case "4":
+                alphabet_action()
+            case "5":
+                to_morse_action()
+            case "6":
+                from_morse_action()
+            case "7":
+                goodbye()
+                break
+            case _:
+                fast_print("Pick a number from 1 to 7.")
+                continue
+
+        if not ask_retry():
+            goodbye()
+            break
+
+if __name__ == "__main__":
+    main()
