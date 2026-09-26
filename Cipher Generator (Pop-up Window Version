@@ -1,0 +1,231 @@
+import tkinter as tk
+from tkinter import scrolledtext
+
+MORSE = {
+    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
+    "F": "..-.", "G": "--.", "H": "....", "I": "..", "J": ".---",
+    "K": "-.-", "L": ".-..", "M": "--", "N": "-.", "O": "---",
+    "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-",
+    "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
+    "Z": "--..",
+    "0": "-----", "1": ".----", "2": "..---", "3": "...--", "4": "....-",
+    "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
+    ".": ".-.-.-", ",": "--..--", "?": "..--..", "!": "-.-.--",
+    "'": ".----.", "-": "-....-",
+}
+REVERSE_MORSE = {code: letter for letter, code in MORSE.items()}
+
+
+def center_window(win, width, height):
+    win.update_idletasks()
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    win.geometry(f"{width}x{height}+{x}+{y}")
+
+
+def shift_text(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base + shift) % 26 + base)
+        else:
+            result += char
+    return result
+
+
+def to_morse(text):
+    words = []
+    for word in text.upper().split():
+        letters = [MORSE[char] for char in word if char in MORSE]
+        if letters:
+            words.append(" ".join(letters))
+    return " / ".join(words)
+
+
+def from_morse(code):
+    words = []
+    for word in code.split("/"):
+        letters = [REVERSE_MORSE.get(symbol, "?") for symbol in word.split()]
+        words.append("".join(letters))
+    return " ".join(words)
+
+
+class InputDialog(tk.Toplevel):
+    """A bigger, resizable pop-up for text input, replacing simpledialog."""
+
+    def __init__(self, parent, title, prompt, numeric=False, minvalue=None, maxvalue=None):
+        super().__init__(parent)
+        self.title(title)
+        center_window(self, 480, 200)
+        self.minsize(400, 180)
+        self.transient(parent)
+        self.grab_set()
+        self.result = None
+        self.numeric = numeric
+        self.minvalue = minvalue
+        self.maxvalue = maxvalue
+
+        tk.Label(self, text=prompt, wraplength=440, justify="left", font=("Segoe UI", 10)).pack(
+            padx=15, pady=(20, 10), anchor="w"
+        )
+
+        self.entry_var = tk.StringVar()
+        self.entry = tk.Entry(self, textvariable=self.entry_var, font=("Consolas", 13))
+        self.entry.pack(padx=15, pady=5, fill="x")
+        self.entry.focus_set()
+
+        self.error_label = tk.Label(self, text="", fg="red", font=("Segoe UI", 9))
+        self.error_label.pack()
+
+        btn_frame = tk.Frame(self)
+        btn_frame.pack(pady=15)
+        tk.Button(btn_frame, text="OK", width=12, command=self.on_ok).pack(side="left", padx=8)
+        tk.Button(btn_frame, text="Cancel", width=12, command=self.on_cancel).pack(side="left", padx=8)
+
+        self.bind("<Return>", lambda e: self.on_ok())
+        self.bind("<Escape>", lambda e: self.on_cancel())
+        self.wait_window()
+
+    def on_ok(self):
+        value = self.entry_var.get()
+        if self.numeric:
+            if not value.isdigit():
+                self.error_label.config(text="Enter a whole number.")
+                return
+            value = int(value)
+            if self.minvalue is not None and value < self.minvalue:
+                self.error_label.config(text=f"Must be at least {self.minvalue}.")
+                return
+            if self.maxvalue is not None and value > self.maxvalue:
+                self.error_label.config(text=f"Must be at most {self.maxvalue}.")
+                return
+        self.result = value
+        self.destroy()
+
+    def on_cancel(self):
+        self.result = None
+        self.destroy()
+
+
+class CipherApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Cipher Generator")
+        center_window(self.root, 620, 520)
+        self.root.resizable(False, False)
+
+        self.build_buttons()
+        self.build_output_area()
+
+        self.set_output("Choose from the options above to get started.")
+
+    def build_buttons(self):
+        caesar_frame = tk.LabelFrame(self.root, text="Caesar Cipher", padx=8, pady=8)
+        caesar_frame.pack(fill="x", padx=10, pady=(10, 5))
+
+        tk.Button(caesar_frame, text="Encrypt", width=12, command=self.encrypt_action).grid(row=0, column=0, padx=4, pady=4)
+        tk.Button(caesar_frame, text="Decrypt", width=12, command=self.decrypt_action).grid(row=0, column=1, padx=4, pady=4)
+        tk.Button(caesar_frame, text="Brute force", width=12, command=self.brute_force_action).grid(row=0, column=2, padx=4, pady=4)
+        tk.Button(caesar_frame, text="Shift reference", width=14, command=self.shift_reference_action).grid(row=1, column=0, columnspan=3, padx=4, pady=(8, 4), sticky="ew")
+
+        morse_frame = tk.LabelFrame(self.root, text="Morse Code", padx=8, pady=8)
+        morse_frame.pack(fill="x", padx=10, pady=5)
+
+        tk.Button(morse_frame, text="Text to Morse", width=14, command=self.to_morse_action).grid(row=0, column=0, padx=4, pady=4)
+        tk.Button(morse_frame, text="Morse to text", width=14, command=self.from_morse_action).grid(row=0, column=1, padx=4, pady=4)
+
+        tk.Button(self.root, text="Quit", width=10, command=self.root.quit).pack(pady=(5, 0))
+
+    def build_output_area(self):
+        self.output = scrolledtext.ScrolledText(
+            self.root, wrap=tk.WORD, font=("Consolas", 10)
+        )
+        self.output.pack(expand=True, fill="both", padx=10, pady=10)
+        self.output.config(state="disabled")
+
+    def set_output(self, text):
+        self.output.config(state="normal")
+        self.output.delete("1.0", tk.END)
+        self.output.insert(tk.END, text)
+        self.output.config(state="disabled")
+
+    def ask_string(self, title, prompt):
+        dialog = InputDialog(self.root, title, prompt)
+        return dialog.result
+
+    def get_shift(self):
+        dialog = InputDialog(
+            self.root, "Shift amount", "Enter a shift from 1 to 25:",
+            numeric=True, minvalue=1, maxvalue=25
+        )
+        return dialog.result
+
+    def encrypt_action(self):
+        message = self.ask_string("Encrypt", "Message to encrypt:")
+        if message is None:
+            return
+        shift = self.get_shift()
+        if shift is None:
+            return
+        steps = "\n".join(
+            f"{c} -> {shift_text(c, shift)}" for c in message if c.isalpha()
+        )
+        result = shift_text(message, shift)
+        self.set_output(f"Letter by letter:\n{steps}\n\nEncrypted: {result}")
+
+    def decrypt_action(self):
+        message = self.ask_string("Decrypt", "Message to decrypt:")
+        if message is None:
+            return
+        shift = self.get_shift()
+        if shift is None:
+            return
+        steps = "\n".join(
+            f"{c} -> {shift_text(c, -shift)}" for c in message if c.isalpha()
+        )
+        result = shift_text(message, -shift)
+        self.set_output(f"Letter by letter:\n{steps}\n\nDecrypted: {result}")
+
+    def brute_force_action(self):
+        message = self.ask_string("Brute force", "Message to crack:")
+        if message is None:
+            return
+        lines = [f"Shift {s:>2}: {shift_text(message, -s)}" for s in range(1, 26)]
+        self.set_output("All 25 possible shifts:\n" + "\n".join(lines))
+
+    def shift_reference_action(self):
+        plain = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        lines = [f"Shift {s:>2}: {shift_text(plain, s)}" for s in range(1, 26)]
+        self.set_output(f"Plain:    {plain}\n\n" + "\n".join(lines))
+
+    def to_morse_action(self):
+        message = self.ask_string("Text to Morse", "Message to translate:")
+        if message is None:
+            return
+        result = to_morse(message)
+        if result:
+            self.set_output("Morse code:\n" + result)
+        else:
+            self.set_output("No letters or numbers to translate.")
+
+    def from_morse_action(self):
+        code = self.ask_string(
+            "Morse to text",
+            "Morse code to translate:\n(spaces between letters, slash between words)"
+        )
+        if code is None:
+            return
+        self.set_output("Text:\n" + from_morse(code))
+
+
+def main():
+    root = tk.Tk()
+    CipherApp(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
